@@ -1,0 +1,5 @@
+expend_venv/
+Reports/*.pdf
+files/*.xls
+transactions_db.sqlite
+test_dev.py
