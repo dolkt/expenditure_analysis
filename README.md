@@ -40,7 +40,7 @@ The program can be installed using Git
 $ git clone https://github.com/dolkt/expenditure_analysis.git
 
 #Going to the the project's directory
-$ cd Expenditures
+$ cd expenditure_analysis
 
 #Installing dependencies
 $ pip install -r requirements.txt
@@ -57,14 +57,14 @@ While logged in the file is retrievable from Handelsbanken here:
 Download the .csv and place it in the following project folder:
 
 ``` 
-.\Expenditures\files
+.\expenditure_analysis\files
 ```
 
 ### 4.2 Upload the transaction file
 Via command line:
 ```bash
-#Go to the Expenditures directory
-cd Expenditures
+#Go to the expenditures directory
+cd expenditure_analysis
 
 #Execute the running script
 python run.py
@@ -79,7 +79,7 @@ python run.py
 Via command line:
 ```bash
 #Go to the Expenditures directory
-cd Expenditures
+cd expenditure_analysis
 
 #Execute the running script
 python run.py
@@ -89,7 +89,7 @@ python run.py
 * Choose which report you want. "*One-Month Report*" or "*Quarterly Report*".
 * The report will be placed as a .pdf in the folder:
 ```
-.\Expenditures\Reports
+.\expenditure_analysis\Reports
 ```
 ![](img/visualization.gif)
 
@@ -102,8 +102,9 @@ The dictionary used to define the categories has the **keys** as the cost catego
 Taken from the file:
 ```python
 #Source
-.\Expenditures\utils\manipulation.py
+.\expenditure_analysis\utils\manipulation.py
 
+#Below are sample categories for my file.
 categories = {"Rent":["ga fastighet", "stenbackahus", "överf internet"],
                 "Subscriptions":["hbo", "netflix", "rewell", "medium", "saga motion", "whoop", "disney"],
                 "Food":["coop", "ica", "willys"],
