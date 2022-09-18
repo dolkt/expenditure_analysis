@@ -37,12 +37,11 @@ def categorization(frame):
     frame["Typ"] = np.where(frame["Belopp"] > 0, "Inkomst", "Kostnad")
 
     #Creating a dictionary containing the categories as keys.
-    categories = {"Rent":["ga fastighet", "stenbackahus", "överf internet"],
+    categories = {"Rent":["ga fastighet", "stenbackahus", "överf internet", "Kenneth Dolk"],
                 "Subscriptions":["hbo", "netflix", "rewell", "medium", "saga motion", "whoop", "disney"],
                 "Food":["coop", "ica", "willys"],
                 "Fast Food":["uber \*eats", "foodora", "subway", "mcdonalds"],
                 "Travel":["sl", "ab storstockho", "ul kollektivtr", "uber \*trip", "taxi"],
-                "Clothes":["massimo", "nk", "ahlens", "nk", "zalando"],
                 "Health":["apotek"],
                 "Installments": ["centrala"]}
 
