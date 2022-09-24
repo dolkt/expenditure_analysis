@@ -22,6 +22,26 @@ def line_plot(df, selected_categories):
     px_line = px.line(data_frame=df, x="Transaktionsdatum", y="Belopp", 
                         color="Kategori", markers=True)
 
+    px_line.update_layout(xaxis={"title_text": None},
+                            yaxis={"title_text": "Amount (kr)"},
+                            title={"text": "Spending per Category over Time", "font_size": 15.5})
+
+    return px_line
+
+
+def monthly_balance(df):
+
+    df = df.resample(on="Transaktionsdatum", rule="M").agg({"Saldo": "last"})
+
+    df["Saldo"] = df["Saldo"].apply(lambda row: float(row.replace(" ", "").replace(",", ".")))
+
+    px_line = px.line(data_frame=df, markers=True)
+
+    px_line.update_layout(xaxis={"title_text": None},
+                        yaxis={"title_text": "Savings (kr)"},
+                        title={"text": "Total Deposit Savings (kr)","font_size": 15.5},
+                        showlegend=False)
+
     return px_line
 
 def bar_plot(df, month_start):
@@ -32,13 +52,18 @@ def bar_plot(df, month_start):
 
     #To do make it masked by from date!
     
-    px_line = px.bar(data_frame=df.iloc[-12:], x="Transaktionsdatum", y="Belopp",
+    px_bar = px.bar(data_frame=df.iloc[-12:], x="Transaktionsdatum", y="Belopp",
                         text_auto=".1f",
                         title="Savings / Loss per Month (kr)")
 
-    px_line.update_traces(textposition="outside")
+    px_bar.update_traces(textposition="outside")
 
-    return px_line
+    px_bar.update_layout(title={"font_size":15.5},
+                        xaxis={"title_text": None},
+                        yaxis={"title_text": "Amount (kr)"})
+
+
+    return px_bar
 
     def group_barplot(frame):
         """Takes a DataFrame and conducts a grouped bar plot.
@@ -108,6 +133,11 @@ def horizontal_barplot(df, selected_month):
 
     df["Belopp"] = df["Belopp"] * -1
 
-    px_line = px.bar(data_frame=df, orientation="h")
+    px_hbar = px.bar(data_frame=df, orientation="h", text_auto=".2s", title="Spending per Category (kr)")
 
-    return px_line
+    px_hbar.update_layout(yaxis={"title_text": None},
+                        xaxis={"title_text":"Spending (kr)"},
+                         showlegend=False,
+                         title={"font_size": 15.5, "x":0.5, "y":0.85, "xanchor":"center", "yanchor":"top"})
+
+    return px_hbar
