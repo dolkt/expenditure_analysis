@@ -3,7 +3,9 @@ The module that handles data uploads to the project's sqlite database
 """
 import os
 import sqlite3
+import pandas as pd
 from pathlib import Path
+
 
 def upload_data(frame):
     """Uploads the data within the DataFrame to the project's sqlite database

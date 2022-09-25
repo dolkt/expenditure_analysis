@@ -1,3 +1,3 @@
 from database.push import upload_data
-from database.pull import pull_data
+from database.pull import pull_data, check_data
 

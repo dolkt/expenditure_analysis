@@ -35,3 +35,18 @@ def pull_data(start_date, end_date):
 
 
     return df
+
+
+def check_data():
+
+    os.chdir(Path(__file__).parent)
+
+    #Establishes connection the sqlite database.
+    conn = sqlite3.connect("transactions_db.sqlite")
+
+    df = pd.read_sql(f"""SELECT Transaktionsdatum FROM Transactions
+                        ORDER BY Transaktionsdatum DESC LIMIT 1""", con=conn)
+    
+    conn.close()
+
+    return df["Transaktionsdatum"].iloc[0]
