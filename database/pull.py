@@ -6,7 +6,7 @@ import sqlite3
 import pandas as pd
 
 
-def pull_data(start_date, end_date):
+def pull_data(start_month):
     """Pulls data from the project's sqlite database from a chosen date interval. 
     
     Keyword arguments:
@@ -23,8 +23,8 @@ def pull_data(start_date, end_date):
     
     #Populates a DataFrame with data from the provided SQL-query to the project's sqlite database.
     df = pd.read_sql(f"""SELECT * FROM Transactions
-                        WHERE strftime('%Y-%m', Transaktionsdatum) 
-                        BETWEEN '{start_date}' AND '{end_date}'
+                        WHERE Transaktionsdatum 
+                        >= '{start_month}'
                         """, con=conn)
     
     #Changes format of the Transaktionsdatum column to datetime
@@ -37,7 +37,7 @@ def pull_data(start_date, end_date):
     return df
 
 
-def check_data():
+def check_latest_date():
 
     os.chdir(Path(__file__).parent)
 
@@ -46,6 +46,21 @@ def check_data():
 
     df = pd.read_sql(f"""SELECT Transaktionsdatum FROM Transactions
                         ORDER BY Transaktionsdatum DESC LIMIT 1""", con=conn)
+    
+    conn.close()
+
+    return df["Transaktionsdatum"].iloc[0]
+
+
+def check_earliest_date():
+
+    os.chdir(Path(__file__).parent)
+
+    #Establishes connection the sqlite database.
+    conn = sqlite3.connect("transactions_db.sqlite")
+
+    df = pd.read_sql(f"""SELECT Transaktionsdatum FROM Transactions
+                        ORDER BY Transaktionsdatum LIMIT 1""", con=conn)
     
     conn.close()
 

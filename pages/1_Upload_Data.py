@@ -26,7 +26,7 @@ upload_prompt = st.button("Upload to database?")
 
 if upload_prompt:
 
-    date_checker = database.check_data()
+    date_checker = database.check_latest_date()
     
     df = df[df["Transaktionsdatum"] > date_checker]
 

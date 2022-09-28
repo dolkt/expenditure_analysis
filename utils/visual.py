@@ -44,9 +44,8 @@ def monthly_balance(df):
 
     return px_line
 
-def bar_plot(df, month_start):
+def bar_plot(df):
     
-    df = df[df["Transaktionsdatum"] >= month_start]
 
     df = df.resample(rule="M", on="Transaktionsdatum").sum().reset_index()
 

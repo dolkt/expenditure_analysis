@@ -1,32 +1,26 @@
 import numpy as np
 import streamlit as st
 import utils
+import database
 import pandas as pd
 import plotly.express as px
 import datetime as dt
 
+st.set_page_config(page_title="Expenditure Visualization", page_icon="📊")
 
-st.subheader("Upload Transaction Data")
-
-chosen_file = st.file_uploader(label="Choose a file", help="Select a transactionfile from Handelsbanken",
-                                type="xls")
-
-if not chosen_file:
-    st.stop()
-df = pd.read_html(chosen_file)[3] 
-
-df = utils.categorization(df)
-
-st.subheader("Select Data")
+st.header("Expenditure Visualization")
 st.markdown("Select a starting month to start the analysis from.")
 
-START_DATE = dt.datetime(year=2018, month=1, day=1)
-END_DATE = dt.datetime.today()
+START_DATE = database.check_earliest_date()
+END_DATE = database.check_latest_date()
 
 datelist = pd.date_range(start=START_DATE, end=END_DATE, freq="M")
 
 starting_month = st.selectbox("Select month to start analyzing from", 
                             options=datelist.strftime("%b-%Y"), key="start_month")
+
+
+df = database.pull_data(dt.datetime.strptime(starting_month, "%b-%Y"))
 
 st.subheader("Overview Level")
 st.markdown("The overview level will visualize what the spending were on an aggregate level, month-by-month.  \n"
@@ -38,7 +32,7 @@ st.markdown("The overview level will visualize what the spending were on an aggr
 monthly_result, balace_over_time, detailed_month = st.tabs(["Monthly Savings/Loss", "Total Balance over Time", "Detailed Month View"])
 with monthly_result:
     #Starting month is temp until SQL-selection is done.
-    st.plotly_chart(utils.bar_plot(df, starting_month))
+    st.plotly_chart(utils.bar_plot(df))
     #Find a way to make negative values red and positive green.
     #Bonus if greener if higher values and more red if lower negative nums
 
