@@ -49,17 +49,20 @@ def bar_plot(df):
 
     df = df.resample(rule="M", on="Transaktionsdatum").sum().reset_index()
 
-    #To do make it masked by from date!
+    df["color"] = np.where(df["Belopp"] > 0, "green", "red")
     
-    px_bar = px.bar(data_frame=df.iloc[-12:], x="Transaktionsdatum", y="Belopp",
+    px_bar = px.bar(data_frame=df, x="Transaktionsdatum", y="Belopp",
                         text_auto=".1f",
+                        color="color",
+                        color_discrete_map={"green":"lawngreen", "red":"red"},
                         title="Savings / Loss per Month (kr)")
 
     px_bar.update_traces(textposition="outside")
 
     px_bar.update_layout(title={"font_size":15.5},
-                        xaxis={"title_text": None},
-                        yaxis={"title_text": "Amount (kr)"})
+                        xaxis={"title_text": None, "tickvals": df["Transaktionsdatum"], "ticktext": df["Transaktionsdatum"].dt.strftime("%b-%Y")},
+                        yaxis={"title_text": "Amount (kr)"},
+                        showlegend=False)
 
 
     return px_bar

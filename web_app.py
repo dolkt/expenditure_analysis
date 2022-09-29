@@ -22,6 +22,11 @@ starting_month = st.selectbox("Select month to start analyzing from",
 
 df = database.pull_data(dt.datetime.strptime(starting_month, "%b-%Y"))
 
+#df = df.resample(rule="M", on="Transaktionsdatum").sum().reset_index()
+
+#df["color"] = np.where(df["Belopp"] > 0, "green", "red")
+
+#st.write(df["Transaktionsdatum"].dt.strftime("%b-%Y"))
 st.subheader("Overview Level")
 st.markdown("The overview level will visualize what the spending were on an aggregate level, month-by-month.  \n"
             "The page consists of three sub-pages  \n"
