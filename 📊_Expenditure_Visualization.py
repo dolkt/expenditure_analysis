@@ -17,16 +17,12 @@ END_DATE = database.check_latest_date()
 datelist = pd.date_range(start=START_DATE, end=END_DATE, freq="M")
 
 starting_month = st.selectbox("Select month to start analyzing from", 
-                            options=datelist.strftime("%b-%Y"), key="start_month")
+                            options=datelist.strftime("%b-%Y"), key="start_month",
+                            index=len(datelist)-6)
 
 
 df = database.pull_data(dt.datetime.strptime(starting_month, "%b-%Y"))
 
-#df = df.resample(rule="M", on="Transaktionsdatum").sum().reset_index()
-
-#df["color"] = np.where(df["Belopp"] > 0, "green", "red")
-
-#st.write(df["Transaktionsdatum"].dt.strftime("%b-%Y"))
 st.subheader("Overview Level")
 st.markdown("The overview level will visualize what the spending were on an aggregate level, month-by-month.  \n"
             "The page consists of three sub-pages  \n"

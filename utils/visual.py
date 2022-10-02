@@ -22,7 +22,7 @@ def line_plot(df, selected_categories):
     px_line = px.line(data_frame=df, x="Transaktionsdatum", y="Belopp", 
                         color="Kategori", markers=True)
 
-    px_line.update_layout(xaxis={"title_text": None},
+    px_line.update_layout(xaxis={"title_text": None, "tickvals": df["Transaktionsdatum"], "ticktext": df["Transaktionsdatum"].dt.strftime("%b-%Y")},
                             yaxis={"title_text": "Amount (kr)"},
                             title={"text": "Spending per Category over Time", "font_size": 15.5})
 
@@ -31,13 +31,13 @@ def line_plot(df, selected_categories):
 
 def monthly_balance(df):
 
-    df = df.resample(on="Transaktionsdatum", rule="M").agg({"Saldo": "last"})
+    df = df.resample(on="Transaktionsdatum", rule="M").agg({"Saldo": "last"}).reset_index()
 
     df["Saldo"] = df["Saldo"].apply(lambda row: float(row.replace(" ", "").replace(",", ".")))
 
-    px_line = px.line(data_frame=df, markers=True)
+    px_line = px.line(data_frame=df, x="Transaktionsdatum", y="Saldo", markers=True)
 
-    px_line.update_layout(xaxis={"title_text": None},
+    px_line.update_layout(xaxis={"title_text": None, "tickvals": df["Transaktionsdatum"], "ticktext": df["Transaktionsdatum"].dt.strftime("%b-%Y")},
                         yaxis={"title_text": "Savings (kr)"},
                         title={"text": "Total Deposit Savings (kr)","font_size": 15.5},
                         showlegend=False)

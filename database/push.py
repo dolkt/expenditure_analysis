@@ -23,7 +23,7 @@ def upload_data(frame):
     #Uploads the provided DataFrame to the sqlite database.
     frame.to_sql("Transactions", #Transactions is the table name within the database transactions_db.sqlite
     con=conn,
-    if_exists="replace", #Will replace current data if it is duplicate.
+    if_exists="append", #Will replace current data if it is duplicate.
     index=False, #Does not use the index of the DataFrame as a seperate column in the sqlite database.
     dtype={"Transaktionsdatum": "Date", "Text": "Text", #Provides the datatype of each column of the DataFrame.
             "Belopp": "Float", "Typ": "Text",
