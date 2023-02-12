@@ -28,6 +28,8 @@ def categorization(frame):
                         else (x.replace(",", ".").replace(" ", ""))
                                             )
                     )
+    frame["Saldo"] = frame["Saldo"].str.replace(" ", "").str.replace(",", ".").astype(float)
+    
 
     #Setting the d-types for the columns
     frame["Belopp"] = frame["Belopp"].astype(float)

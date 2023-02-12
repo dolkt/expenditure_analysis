@@ -1,5 +1,8 @@
-expend_venv/
+.*_venv
+.env
 Reports/*.pdf
 files/*.xls
 transactions_db.sqlite
 test_dev.py
+*alembic
+*.ini

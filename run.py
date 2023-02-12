@@ -1,60 +1,52 @@
-import files
-import database
+from database import engine, SessionLocal
+from passlib.context import CryptContext
+import models
 import utils
-import Reports
-import os
-from matplotlib import pyplot as plt
-from matplotlib.backends.backend_pdf import PdfPages
+import streamlit as st
+import streamlit_authenticator as stauth
+
+models.Base.metadata.create_all(bind=engine)
+
+#<<<----Register user>>-----
+
+def get_db():
+    try:
+        db = SessionLocal()
+        yield db
+    finally: 
+        db.close()
 
 
-user_action = input("""Select your action:
-[1] Upload new data
-[2] Produce Expenditure Report
-Select: """)
+if "current_user" not in st.session_state:
+#<<<----Login>>-----
+    st.subheader("Login")
 
-if user_action == str(1):
-    df = files.chosen_file()
-    utils.categorization(df)
+    login_username = st.text_input(label="Username", key="login_username")
+    login_password = st.text_input(label="Password", type="password", key="login_password")
 
-    database.upload_data(df)
+    st.button(label="Login", key="log_in", on_click=utils.login, args=(login_username, login_password))
 
-    print("Upload Success! - Data Uploaded to Database")
+#<<<----Register user>>-----
+    with st.expander(label="Register"):
+        col1, col2  = st.columns(2)
 
-elif user_action == str(2):
+        with col1:
+            provided_username = st.text_input(label="Username")
+            provided_password = st.text_input(label="Password", type="password")
+            provided_password2 = st.text_input(label="Repeat password", type="password")
 
-    report_type = input("""Which Expenditure Report Should Be Produced?
-    [1] One-Month Report
-    [2] Quarterly Report
-    Select: """)
-    
-    if report_type == "1":
-        chosen_month = input("Select which month to analyze, as YYYY-MM: ")
+        with col2: 
+            provided_fname = st.text_input("First name")
+            provided_lname = st.text_input("Last name")
+            provided_email = st.text_input("E-mail")
+            user_registration = st.button("Register", on_click=utils.register_user, key="register", args=(provided_username, provided_password, provided_password2, provided_fname, provided_lname, provided_email))
+            
 
-        df = database.pull_data(chosen_month, chosen_month)
-        
-        os.chdir(Reports.get_report_path())
-
-        monthly_report = PdfPages(f"One Month Report for Period {chosen_month}.pdf")
-        monthly_report.savefig(utils.month_hbarplot(df))
-        monthly_report.close()
-
-    
-    elif report_type == "2":
-        
-        start_date = input("Select which period as start, as YYYY-MM: ")
-        end_date = input("Select which period to end the quarterly report, as YYYY-MM: ")
-    
-        df = database.pull_data(start_date, end_date)
+else:
+    st.sidebar.title(f"Välkommen {st.session_state['first_name']}")
 
 
-        os.chdir(Reports.get_report_path())
 
-        quarterly_report = PdfPages(f"Quarterly Report {start_date} to {end_date}.pdf")
-        quarterly_report.savefig(utils.line_plot(df))
-        for figure in utils.bar_plot(df):
-            quarterly_report.savefig(figure)
+st.session_state
 
-        quarterly_report.close()
-    
 
-#Add a license

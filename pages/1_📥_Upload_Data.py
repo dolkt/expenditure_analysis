@@ -3,9 +3,12 @@ import streamlit as st
 import pandas as pd
 import utils
 import database
+import models
+
 
 #Setting the title for the page as well as the icon displayed in the browser tab
 st.set_page_config(page_title="Upload Data", page_icon="💾")
+
 
 #Header for the page
 st.subheader("Upload Transaction Data")
@@ -24,8 +27,11 @@ df = pd.read_html(chosen_file)[3]
 #Categorizes the costs based on the parameters in the categorization function
 df = utils.categorization(df)
 
+df["user_id"] = st.session_state["user_id"]
+
 #Shows sample data from the provided xls.
 st.write("Sample from the data to upload:", df.head())
+st.write(df["Belopp"].dtype)
 
 #Prompts the user whether they want to upload the data to the database
 upload_prompt = st.button("Upload to database?")
@@ -34,13 +40,16 @@ upload_prompt = st.button("Upload to database?")
 #the provided file from that date.
 if upload_prompt:
 
-    date_checker = database.check_latest_date()
+    #date_checker = database.check_latest_date()
     
-    df = df[df["Transaktionsdatum"] > date_checker]
+    #df = df[df["Transaktionsdatum"] > date_checker]
 
     if len(df) > 1:
-        database.upload_data(df)
+        #database.upload_data(df)
+        df.to_sql(con=database.engine, name=models.Expenditures.__tablename__, if_exists="append", index=False)
         st.success("Data was uploaded", icon="✔")
     else:
          st.exception("All that data is already in the database")
 
+
+st.session_state
