@@ -1,6 +1,6 @@
 import streamlit as st
 import utils
-import database
+import databases
 import pandas as pd
 import datetime as dt
 
@@ -12,8 +12,8 @@ st.header("Expenditure Visualization")
 st.markdown("Select a starting month to start the analysis from.")
 
 #Checking the earliest and the latest date in the db in order to give the user a date range from the prompt
-START_DATE = database.check_earliest_date()
-END_DATE = database.check_latest_date()
+START_DATE = databases.check_earliest_date()
+END_DATE = databases.check_latest_date()
 
 #Divide the provided dates into monthly sections
 datelist = pd.date_range(start=START_DATE, end=END_DATE, freq="M")
@@ -25,7 +25,7 @@ starting_month = st.selectbox("Select month to start analyzing from",
 
 
 #Pulls data from the database given the date input from the user
-df = database.pull_data(dt.datetime.strptime(starting_month, "%b-%Y"))
+df = databases.pull_data(dt.datetime.strptime(starting_month, "%b-%Y"))
 
 #Second section regarding the overview level of the analysis
 st.subheader("Overview Level")

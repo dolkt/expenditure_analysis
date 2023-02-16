@@ -40,16 +40,17 @@ upload_prompt = st.button("Upload to database?")
 #the provided file from that date.
 if upload_prompt:
 
-    #date_checker = database.check_latest_date()
+    date_checker = database.check_latest_date()
     
-    #df = df[df["Transaktionsdatum"] > date_checker]
+    df = df[df["Transaktionsdatum"] > date_checker]
 
     if len(df) > 1:
         #database.upload_data(df)
         df.to_sql(con=database.engine, name=models.Expenditures.__tablename__, if_exists="append", index=False)
         st.success("Data was uploaded", icon="✔")
     else:
-         st.exception("All that data is already in the database")
+         st.error("All that data is already in the database")
+         st.stop()
 
 
 st.session_state
