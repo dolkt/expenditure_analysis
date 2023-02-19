@@ -40,7 +40,7 @@ upload_prompt = st.button("Upload to database?")
 #the provided file from that date.
 if upload_prompt:
 
-    date_checker = database.check_latest_date()
+    date_checker = database.check_latest_date(user_id=st.session_state["user_id"])
     
     df = df[df["Transaktionsdatum"] > date_checker]
 
@@ -50,7 +50,18 @@ if upload_prompt:
         st.success("Data was uploaded", icon="✔")
     else:
          st.error("All that data is already in the database")
-         st.stop()
+         #st.stop()
 
 
 st.session_state
+
+st.write(database.check_earliest_date(user_id=st.session_state["user_id"]))
+st.write(database.check_latest_date(user_id=st.session_state["user_id"]))
+
+
+with st.form("expenditure_form"):
+
+    st.number_input("Starting Balance within the month (Optional)", step=int(1))
+    st.date_input("Date (Obligatory)")
+    st.selectbox("Type", options=["Inkomst", "Kostnad"])
+    st.number_input("Amount", step=int(1))

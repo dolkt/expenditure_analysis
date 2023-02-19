@@ -1,7 +1,7 @@
 """
 Module for creating the database"""
 
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from dotenv import load_dotenv
@@ -37,7 +37,7 @@ Base = declarative_base()
 
 
 
-def check_latest_date(db = engine):
+def check_latest_date(user_id: int, db = engine):
     """
     Pulls the latest date from the internal database
     
@@ -51,9 +51,15 @@ def check_latest_date(db = engine):
     #Establishes connection the postgres database.
     db_connection = db.connect()
 
+    #The double quotation marks around the column name forces it to be case sensitive
+    query = f'''
+    SELECT "Transaktionsdatum" from expenditures
+    WHERE user_id = {user_id}
+    ORDER BY "Transaktionsdatum" DESC
+    '''
 
     #Reads the latest (newest) date from the database
-    df = pd.read_sql(f"""SELECT * FROM expenditures""", con=db_connection)
+    df = pd.read_sql(sql=text(query), con=db_connection)
     
     #Closes the connection with the sqlite database.
     db_connection.close()
@@ -64,8 +70,7 @@ def check_latest_date(db = engine):
     return df["Transaktionsdatum"].iloc[0]
 
 
-def check_earliest_date():
-    pass
+def check_earliest_date(user_id: int, db = engine):
     """
     Pulls the earliest date from the internal database
     
@@ -74,20 +79,36 @@ def check_earliest_date():
     pandas.Series object containing the earliest date
     """
 
-    #Changes the current working directory to the database folder.
-    #os.chdir(Path(__file__).parent)
+    #Establishes connection the postgres database.
+    db_connection = db.connect()
 
-    #Establishes connection the sqlite database.
-    #conn = sqlite3.connect("transactions_db.sqlite")
+    query = f'''
+    SELECT "Transaktionsdatum" from expenditures
+    WHERE user_id = {user_id}
+    ORDER BY "Transaktionsdatum" ASC
+    '''
 
-     #Reads the earliest (oldest) date from the database
-    #df = pd.read_sql(f"""SELECT Transaktionsdatum FROM Transactions
-                        #ORDER BY Transaktionsdatum LIMIT 1""", con=conn)
+    #Reads the earliest (oldest) date from the database
+    df = pd.read_sql(sql=text(query), con=db_connection)
     
     #Closes the connection with the sqlite database.
-    #conn.close()
+    db_connection.close()
 
-    #return df["Transaktionsdatum"].iloc[0]
+    return df["Transaktionsdatum"].iloc[0]
 
 
-print(check_latest_date())
+def get_column_names(db = engine):
+
+
+    db_connection = db.connect()
+
+    query = '''
+    SELECT * FROM expenditures
+    WHERE  false
+    '''
+
+    df = pd.read_sql(sql=text(query), con=db_connection)
+
+    db_connection.close()
+
+    return df
