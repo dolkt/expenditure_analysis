@@ -2,7 +2,8 @@
 import pandas as pd
 import numpy as np
 import regex as re
-
+import streamlit as st
+from typing import Union
 
 
 def categorization(frame):
@@ -57,3 +58,18 @@ def categorization(frame):
     frame["Kategori"] = np.where((frame["Typ"] == "Kostnad") & (frame["Kategori"] == ""), "Other", frame["Kategori"])
 
     return frame
+
+
+def add_expenditure(date, category: str, amount: float, user_id: int, text: Union[str, None] = None):
+
+    data = {
+        "Transaktionsdatum": date,
+        "Text": text,
+        "Belopp": amount,
+        "Kategori": category,
+        "user_id": user_id
+    }
+
+    new_table = pd.DataFrame([data])
+
+    return new_table

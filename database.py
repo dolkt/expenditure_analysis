@@ -90,6 +90,9 @@ def check_earliest_date(user_id: int, db = engine):
 
     #Reads the earliest (oldest) date from the database
     df = pd.read_sql(sql=text(query), con=db_connection)
+
+    if len(df) == 0:
+        return pd.to_datetime(0)
     
     #Closes the connection with the sqlite database.
     db_connection.close()

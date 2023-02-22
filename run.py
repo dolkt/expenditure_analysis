@@ -3,7 +3,6 @@ from passlib.context import CryptContext
 import models
 import utils
 import streamlit as st
-import streamlit_authenticator as stauth
 
 models.Base.metadata.create_all(bind=engine)
 
