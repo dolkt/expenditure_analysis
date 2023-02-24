@@ -51,16 +51,12 @@ def check_latest_date(user_id: int, db = engine):
     #Establishes connection the postgres database.
     db_connection = db.connect()
 
-<<<<<<< HEAD
     #The double quotation marks around the column name forces it to be case sensitive
     query = f'''
     SELECT "Transaktionsdatum" from expenditures
     WHERE user_id = {user_id}
     ORDER BY "Transaktionsdatum" DESC
     '''
-=======
-    query = "SELECT * FROM expenditures"
->>>>>>> cbe27471d72ec34f6f7b3846b885776a89aa130a
 
     #Reads the latest (newest) date from the database
     df = pd.read_sql(sql=text(query), con=db_connection)
@@ -74,12 +70,7 @@ def check_latest_date(user_id: int, db = engine):
     return df["Transaktionsdatum"].iloc[0]
 
 
-<<<<<<< HEAD
 def check_earliest_date(user_id: int, db = engine):
-=======
-def check_earliest_date(db = engine):
-
->>>>>>> cbe27471d72ec34f6f7b3846b885776a89aa130a
     """
     Pulls the earliest date from the internal database
     
@@ -89,7 +80,6 @@ def check_earliest_date(db = engine):
     """
 
     #Establishes connection the postgres database.
-<<<<<<< HEAD
     db_connection = db.connect()
 
     query = f'''
@@ -119,24 +109,9 @@ def get_column_names(db = engine):
     SELECT * FROM expenditures
     WHERE  false
     '''
-=======
-    db_conn = db.connect()
-
-     #Reads the earliest (oldest) date from the database
-    df = pd.read_sql(f"""SELECT Transaktionsdatum FROM Transactions
-                        #ORDER BY Transaktionsdatum LIMIT 1""", con=db_conn)
-    
-    #Closes the connection with the sqlite database.
-    db_conn.close()
-
-    return df["Transaktionsdatum"].iloc[0]
->>>>>>> cbe27471d72ec34f6f7b3846b885776a89aa130a
 
     df = pd.read_sql(sql=text(query), con=db_connection)
 
     db_connection.close()
 
-<<<<<<< HEAD
     return df
-=======
->>>>>>> cbe27471d72ec34f6f7b3846b885776a89aa130a
