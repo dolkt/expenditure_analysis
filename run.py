@@ -3,6 +3,10 @@ from passlib.context import CryptContext
 import models
 import utils
 import streamlit as st
+<<<<<<< HEAD
+=======
+
+>>>>>>> cbe27471d72ec34f6f7b3846b885776a89aa130a
 
 models.Base.metadata.create_all(bind=engine)
 
