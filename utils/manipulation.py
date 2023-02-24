@@ -65,7 +65,8 @@ def add_expenditure(date, category: str, amount: float, user_id: int, text: Unio
     data = {
         "Transaktionsdatum": date,
         "Text": text,
-        "Belopp": amount,
+        "Belopp": amount * -1 if amount > 0 else amount,
+        "Typ": "Kostnad",
         "Kategori": category,
         "user_id": user_id
     }
