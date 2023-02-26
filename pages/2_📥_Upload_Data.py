@@ -1,4 +1,3 @@
-from logging import exception
 import streamlit as st
 import pandas as pd
 import utils

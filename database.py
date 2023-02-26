@@ -5,7 +5,9 @@ from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from dotenv import load_dotenv
+import streamlit as st
 import pandas as pd
+import numpy as np
 import os
 
 
@@ -115,3 +117,28 @@ def get_column_names(db = engine):
     db_connection.close()
 
     return df
+
+
+def get_user_categories(user_id: int, usage: str, db = engine):
+
+
+    db_connection = db.connect()
+
+    query = f'''
+    SELECT name, text FROM categories
+    WHERE user_id = {user_id}
+    '''
+
+    df = pd.read_sql(sql=text(query), con=db_connection)
+
+    db_connection.close()
+
+    if usage == "display":
+        df["name"] = df["name"].str.capitalize()
+        df.columns = df.columns.str.capitalize()
+        return df
+    
+    if usage == "cost_categorization":
+        df = df.replace("", np.nan).dropna(subset=["text"])
+        return df
+

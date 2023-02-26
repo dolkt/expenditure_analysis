@@ -16,6 +16,7 @@ class Users(Base):
     hashed_password = Column(String)
 
     expenditure = relationship("Expenditures", back_populates="user_expenditure")
+    category = relationship("Categories", back_populates="user_category")
 
 
 class Expenditures(Base):
@@ -32,3 +33,15 @@ class Expenditures(Base):
     user_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
 
     user_expenditure = relationship("Users", back_populates="expenditure")
+
+
+class Categories(Base):
+
+    __tablename__ = "categories"
+    
+    category_id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, index=True)
+    text = Column(String, nullable=True)
+    user_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
+
+    user_category = relationship("Users", back_populates="category")

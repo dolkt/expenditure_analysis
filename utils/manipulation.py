@@ -3,7 +3,9 @@ import pandas as pd
 import numpy as np
 import regex as re
 import streamlit as st
+import models
 from typing import Union
+from database import get_db, SessionLocal
 
 
 def categorization(frame):
@@ -74,3 +76,29 @@ def add_expenditure(date, category: str, amount: float, user_id: int, text: Unio
     new_table = pd.DataFrame([data])
 
     return new_table
+
+def add_category(category_name: str, category_text: str, user_id: int, db: SessionLocal = next(get_db()), customized: bool = False):
+
+    category_name = category_name.lower().rstrip().lstrip()
+    category_text = category_text.lower().rstrip().lstrip()
+
+    existing_category = db.query(models.Categories).filter(models.Categories.user_id == user_id, models.Categories.name == category_name).first()
+
+    if category_name.strip() is None:
+        return st.warning("Please provide a name")
+
+    if existing_category and not customized:
+        return st.error("Category with that name already exist!")
+
+    
+    category_model = models.Categories()
+
+    category_model.name = category_name
+    category_model.text = category_text
+    category_model.user_id = user_id
+
+    db.add(category_model)
+
+    db.commit()
+
+    return st.success("Category was added!")

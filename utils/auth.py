@@ -30,6 +30,8 @@ def register_user(
     for variable in (username, password, first_name, e_mail):
         if variable == "":
             return st.error("Please provide value in all fields")
+        
+    username, e_mail = username.strip(), e_mail.strip()
 
     validation1 = db.query(models.Users).filter(models.Users.username == username).first()
     validation2 = db.query(models.Users).filter(models.Users.email == e_mail). first()
