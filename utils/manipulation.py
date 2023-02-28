@@ -5,10 +5,10 @@ import regex as re
 import streamlit as st
 import models
 from typing import Union
-from database import get_db, SessionLocal
+from database import get_db, SessionLocal, get_user_categories
 
 
-def categorization(frame):
+def categorization(frame, user_id: int) -> pd.DataFrame:
     """Cleans the data and places transactions in provided categories
 
     Keyword arguments:
@@ -42,13 +42,7 @@ def categorization(frame):
     frame["Typ"] = np.where(frame["Belopp"] > 0, "Inkomst", "Kostnad")
 
     #Creating a dictionary containing the categories as keys.
-    categories = {"Rent":["ga fastighet", "stenbackahus", "överf internet", "Kenneth Dolk"],
-                "Subscriptions":["hbo", "netflix", "rewell", "medium", "saga motion", "whoop", "disney"],
-                "Food":["coop", "ica", "willys"],
-                "Fast Food":["uber \*eats", "foodora", "subway", "mcdonalds"],
-                "Travel":["sl", "ab storstockho", "ul kollektivtr", "uber \*trip", "taxi"],
-                "Health":["apotek"],
-                "Installments": ["centrala"]}
+    categories = categories_dict(user_id=user_id)
 
     #Sets a new column for the categorization of the transactions.
     frame["Kategori"] = ""
@@ -102,3 +96,19 @@ def add_category(category_name: str, category_text: str, user_id: int, db: Sessi
     db.commit()
 
     return st.success("Category was added!")
+
+
+def categories_dict(user_id: int) -> dict:
+
+    df = get_user_categories(user_id=user_id, usage="cost_categorization")
+
+    categories_dict = {}
+
+    for _, row in df.iterrows():
+        if row["name"] not in categories_dict:
+            categories_dict[row["name"]] = [row["text"]]
+        else:
+            categories_dict[row["name"]].append(row["text"])
+
+    return categories_dict
+    

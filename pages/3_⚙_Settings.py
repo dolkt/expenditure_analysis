@@ -1,7 +1,7 @@
 import streamlit as st
 import database
 import utils
-
+import pandas as pd
 
 st.set_page_config("Settings", page_icon="⚙")
 
@@ -42,3 +42,21 @@ with col2:
         )
 
 #Add the customized category to db.
+
+#Try to add into dict
+#categories_dict = {}
+#for _, row in user_categories.iterrows():
+    #if row["name"] not in categories_dict:
+        #categories_dict[row["name"]] = [row["text"]]
+    #else:
+        #categories_dict[row["name"]].append(row["text"])
+
+categories_dict = utils.categories_dict(st.session_state["user_id"])
+
+
+st.write(categories_dict)
+
+#st.write(dict(zip(user_categories.name, user_categories.text)))
+
+#st.write(pd.Series(user_categories.text.values, index=user_categories.name.values).to_dict())
+

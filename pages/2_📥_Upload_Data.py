@@ -22,7 +22,7 @@ if chosen_file:
     df = pd.read_html(chosen_file)[3] 
 
     #Categorizes the costs based on the parameters in the categorization function
-    df = utils.categorization(df)
+    df = utils.categorization(df, user_id=st.session_state["user_id"])
 
     #Shows sample data from the provided xls.
     st.write("Sample from the data to upload:", df.head())
