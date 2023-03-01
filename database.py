@@ -102,14 +102,17 @@ def check_earliest_date(user_id: int, db = engine):
     return df["Transaktionsdatum"].iloc[0]
 
 
-def get_column_names(db = engine):
+def get_uncategorized(user_id: int, db = engine) -> pd.DataFrame:
 
 
     db_connection = db.connect()
 
-    query = '''
-    SELECT * FROM expenditures
-    WHERE  false
+    query = f'''
+    SELECT COUNT(user_id) AS "Occurances", SUM("Belopp") AS "Spent", "Text"
+    FROM expenditures
+    WHERE  "Kategori" = 'Other' AND user_id = {user_id}
+    GROUP BY "Text"
+    ORDER BY "Occurances" DESC
     '''
 
     df = pd.read_sql(sql=text(query), con=db_connection)

@@ -55,6 +55,7 @@ categories_dict = utils.categories_dict(st.session_state["user_id"])
 
 
 st.write(categories_dict)
+st.write(database.get_uncategorized(user_id=st.session_state["user_id"]))
 
 #st.write(dict(zip(user_categories.name, user_categories.text)))
 
