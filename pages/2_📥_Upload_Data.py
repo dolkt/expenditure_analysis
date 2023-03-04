@@ -64,7 +64,7 @@ with col1:
     
     expenditure_form.subheader("Add expenditure")
     expenditure_amount = expenditure_form.number_input("Amount", step=int(1))
-    expenditure_category = expenditure_form.selectbox("Category", options=["Other"])
+    expenditure_category = expenditure_form.selectbox("Category", options=database.get_user_categories(st.session_state["user_id"], usage="display")["Name"].unique())
     expenditure_date = expenditure_form.date_input("Date")
     expenditure_text = expenditure_form.text_input("Add text (Optional)")
 

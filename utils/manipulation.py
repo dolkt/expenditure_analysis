@@ -97,6 +97,33 @@ def add_category(category_name: str, category_text: str, user_id: int, db: Sessi
 
     return st.success("Category was added!")
 
+def update_category(category_name: str, category_text: str, user_id: int, db: SessionLocal = next(get_db())):
+
+    category_text = category_text.rstrip()
+
+    existing_text = db.query(models.Expenditures).filter(models.Expenditures.user_id == user_id, models.Expenditures.Text == category_text).all()
+
+    if existing_text:
+        db.query(models.Expenditures).filter(
+            models.Expenditures.user_id == user_id, models.Expenditures.Text == category_text).update(
+            {models.Expenditures.Kategori:category_name}, synchronize_session = False)
+        
+        db.commit()
+        
+        st.success(f"{len(existing_text)} expenditure(s) containing {category_text} were updated to {category_name}")
+    
+    category_model = models.Categories()
+
+    category_model.name = category_name
+    category_model.text = category_text
+    category_model.user_id = user_id
+
+    db.add(category_model)
+
+    db.commit()
+
+    return st.success("Category was successfully edited")
+
 
 def categories_dict(user_id: int) -> dict:
 
@@ -111,4 +138,4 @@ def categories_dict(user_id: int) -> dict:
             categories_dict[row["name"]].append(row["text"])
 
     return categories_dict
-    
+

@@ -37,8 +37,8 @@ with col2:
         customize_category = st.button(
             "Customize Category",
             key="customize_category",
-            on_click=utils.add_category,
-            kwargs={"user_id": st.session_state["user_id"], "category_name": existing_category, "category_text": identifying_text, "customized": True}
+            on_click=utils.update_category,
+            kwargs={"user_id": st.session_state["user_id"], "category_name": existing_category, "category_text": identifying_text}
         )
 
 #Add the customized category to db.
