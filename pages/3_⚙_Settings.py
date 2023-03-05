@@ -10,14 +10,14 @@ st.subheader("User Categories")
 st.markdown("""Is this section you will be able to configure the categories that will be used for your expenditure categorization""")
 
 
-user_categories = database.get_user_categories(user_id=st.session_state["user_id"], usage="cost_categorization")
+user_categories = database.get_user_categories(user_id=st.session_state["user_id"], usage="display")
 
 
 if len(user_categories) != 0:
     st.subheader("Your categories:")
-    user_categories
+    st.write(user_categories)
 
-st.subheader("Handle your Categories")
+st.subheader("Add or Edit a Category")
 col1, col2 = st.columns(2)
 with col1:
     with st.expander("Add a new category"):
@@ -32,7 +32,7 @@ with col1:
 
 with col2:
     with st.expander("Identify Category by Text"):
-        existing_category = st.selectbox("Category", options=user_categories["name"].unique())
+        existing_category = st.selectbox("Category", options=user_categories["Name"].unique())
         identifying_text = st.text_input("Text that identifies your category")
         customize_category = st.button(
             "Customize Category",
@@ -41,20 +41,20 @@ with col2:
             kwargs={"user_id": st.session_state["user_id"], "category_name": existing_category, "category_text": identifying_text}
         )
 
-#Add the customized category to db.
 
-#Try to add into dict
-#categories_dict = {}
-#for _, row in user_categories.iterrows():
-    #if row["name"] not in categories_dict:
-        #categories_dict[row["name"]] = [row["text"]]
-    #else:
-        #categories_dict[row["name"]].append(row["text"])
+st.subheader("Deletes")
+category_to_delete = st.selectbox(
+    "Category to delete", 
+    options=user_categories["Name"].unique(),
+    key="select_delete"
+)
+st.button("Delete Category",
+          key="category_delete",
+          on_click=utils.delete_category,
+          kwargs={"category_name": category_to_delete, "user_id": st.session_state["user_id"]})
 
-categories_dict = utils.categories_dict(st.session_state["user_id"])
 
 
-st.write(categories_dict)
 st.write(database.get_uncategorized(user_id=st.session_state["user_id"]))
 
 #st.write(dict(zip(user_categories.name, user_categories.text)))

@@ -1,6 +1,3 @@
-"""
-Module for creating the database"""
-
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
@@ -122,7 +119,24 @@ def get_uncategorized(user_id: int, db = engine) -> pd.DataFrame:
     return df
 
 
-def get_user_categories(user_id: int, usage: str, db = engine):
+def get_user_categories(user_id: int, db = engine, usage: str = "cost_categorization") -> pd.DataFrame:
+    """
+    Retrieves all categories and the corresponding identifying text that a user has.
+    
+    
+    
+    ---------
+    Parameters
+    
+    user_id: int
+        The user_id to retrieve the categories for
+    db: sqlalchemy.engine
+        Connection to the database by using engine.connect()
+    usage: str {'cost_categorization' or 'display} default 'cost_categorization'
+        'cost_categorization' is used for the categorizing expenditures in a file
+        'display' is used for displaying the expenditure categories without excluding
+        the categories that do not have any identifying texts attached to them
+    """
 
 
     db_connection = db.connect()
@@ -137,7 +151,7 @@ def get_user_categories(user_id: int, usage: str, db = engine):
     db_connection.close()
 
     if usage == "display":
-        df["name"] = df["name"].str.capitalize()
+        #df["name"] = df["name"].str.capitalize()
         df.columns = df.columns.str.capitalize()
         return df
     

@@ -73,8 +73,8 @@ def add_expenditure(date, category: str, amount: float, user_id: int, text: Unio
 
 def add_category(category_name: str, category_text: str, user_id: int, db: SessionLocal = next(get_db()), customized: bool = False):
 
-    category_name = category_name.lower().rstrip().lstrip()
-    category_text = category_text.lower().rstrip().lstrip()
+    category_name = category_name.rstrip().lstrip()
+    category_text = category_text.rstrip().lstrip()
 
     existing_category = db.query(models.Categories).filter(models.Categories.user_id == user_id, models.Categories.name == category_name).first()
 
@@ -99,7 +99,7 @@ def add_category(category_name: str, category_text: str, user_id: int, db: Sessi
 
 def update_category(category_name: str, category_text: str, user_id: int, db: SessionLocal = next(get_db())):
 
-    category_text = category_text.rstrip()
+    category_text = category_text.rstrip().lstrip()
 
     existing_text = db.query(models.Expenditures).filter(models.Expenditures.user_id == user_id, models.Expenditures.Text == category_text).all()
 
@@ -125,12 +125,61 @@ def update_category(category_name: str, category_text: str, user_id: int, db: Se
     return st.success("Category was successfully edited")
 
 
-def categories_dict(user_id: int) -> dict:
+def delete_category(category_name: str, user_id: int, db: SessionLocal = next(get_db())) -> None:
+    """
+    Firstly it changes the existing expenditures (if any) to the category 'Other' from the category that is
+    being deleted for the given user.
+    Secondly it deletes the given category from the database
+    
+    --------
+    Parameters
+    
+    category_name: str of the category that is being deleted
+    user_id: int of the user id where the category will be deleted
+    db: SessionLocal a connection to the database
+    """
+    
+    #Recategorizes the expenditures currently within 'category_name' to 'Other' for the given user
+    db.query(models.Expenditures).filter(
+        models.Expenditures.Kategori == category_name, models.Expenditures.user_id == user_id
+    ).update({models.Expenditures.Kategori:"Other"}, synchronize_session = False)
 
+    st.warning(f"Expenditures catagorized as {category_name} are now recategorized as 'Other'")
+
+    #Deletes 'category_name' from the database for the given user.
+    db.query(models.Categories).filter(
+        models.Categories.name == category_name, models.Categories.user_id == user_id
+    ).delete()
+
+    #Commits both the actions above
+    db.commit()
+
+    st.success(f"{category_name} was successfully deleted!")
+
+
+
+def categories_dict(user_id: int) -> dict:
+    """
+    Helper function used for the categorization of expenditures provided by a file.
+    Adds all the categories and it's corresponding texts that identify it to a dictionary.
+    The key in the dictionary will be the category and the values will be the texts
+    that identify the given category within the key
+    
+    
+    --------
+    Parameters
+    user_id: int id of the given user
+
+    --------
+    Returns
+    dict containing key-value pair of the user's category and each category's identifying texts.
+    """
+
+    #Calls the database and gets all the categories for the given user
     df = get_user_categories(user_id=user_id, usage="cost_categorization")
 
+    #Iterates over the dataframe holding all the categories and corresponding texts and adds it to a dictionary.
     categories_dict = {}
-
     for _, row in df.iterrows():
         if row["name"] not in categories_dict:
             categories_dict[row["name"]] = [row["text"]]
