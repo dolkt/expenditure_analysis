@@ -71,6 +71,17 @@ def add_expenditure(date, category: str, amount: float, user_id: int, text: Unio
 
     return new_table
 
+def add_income(date, amount: float, user_id: int) -> pd.DataFrame:
+
+    data = {
+        "Transaktionsdatum": date,
+        "Belopp": amount * -1 if amount < 0 else amount,
+        "Typ": "Inkomst",
+        "user_id": user_id
+    }
+
+    return pd.DataFrame([data])
+
 def add_category(category_name: str, category_text: str, user_id: int, db: SessionLocal = next(get_db()), customized: bool = False):
 
     category_name = category_name.rstrip().lstrip()
@@ -100,6 +111,9 @@ def add_category(category_name: str, category_text: str, user_id: int, db: Sessi
 def update_category(category_name: str, category_text: str, user_id: int, db: SessionLocal = next(get_db())):
 
     category_text = category_text.rstrip().lstrip()
+
+    if category_name == None:
+        return st.error("You need to add a category first, dummy")
 
     existing_text = db.query(models.Expenditures).filter(models.Expenditures.user_id == user_id, models.Expenditures.Text == category_text).all()
 

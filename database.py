@@ -99,6 +99,24 @@ def check_earliest_date(user_id: int, db = engine):
     return df["Transaktionsdatum"].iloc[0]
 
 
+def get_cash_data(user_id: int, start_month: str, db = engine) -> pd.DataFrame:
+
+    db_connection = db.connect()
+
+    #start_month = start_month
+
+    query = f'''
+    SELECT * FROM expenditures
+    WHERE "Transaktionsdatum" >= '{start_month}' AND user_id = {user_id}
+    '''
+
+    df = pd.read_sql(sql=text(query), con=db_connection)
+
+    db_connection.close()
+
+    return df
+
+
 def get_uncategorized(user_id: int, db = engine) -> pd.DataFrame:
 
 

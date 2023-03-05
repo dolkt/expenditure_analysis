@@ -64,7 +64,7 @@ with col1:
     
     expenditure_form.subheader("Add expenditure")
     expenditure_amount = expenditure_form.number_input("Amount", step=int(1))
-    expenditure_category = expenditure_form.selectbox("Category", options=database.get_user_categories(st.session_state["user_id"])["name"].unique())
+    expenditure_category = expenditure_form.selectbox("Category", options=database.get_user_categories(st.session_state["user_id"], usage="display")["Name"].unique())
     expenditure_date = expenditure_form.date_input("Date")
     expenditure_text = expenditure_form.text_input("Add text (Optional)")
 
@@ -84,17 +84,35 @@ if expenditure_submit:
 
 
 with col2:
-    if len(st.session_state["expend_df"]) == 0:
-        st.empty()
-    else:
-        st.session_state["expend_df"]
-    
-        manual_upload = st.button("Upload to database?", key="manual_expenditure")
+    income_form = st.form("income_form", clear_on_submit=True)
 
-        if manual_upload:
-            st.session_state["expend_df"].to_sql(con=database.engine,name=models.Expenditures.__tablename__, if_exists="append", index=False)
-            del st.session_state["expend_df"]
-            st.success("Data was uploaded!")
+    income_form.subheader("Add income")
+    income_amount = income_form.number_input("Amount", step=int(1))
+    income_date = income_form.date_input("Date")
+
+    income_submit = income_form.form_submit_button("Add income")
+
+
+if income_submit:
+     new_data = utils.add_income(
+          date = income_date,
+          amount = income_amount,
+          user_id = st.session_state["user_id"]
+     )
+
+     st.session_state["expend_df"] = pd.concat([st.session_state["expend_df"], new_data], ignore_index=True)     
+
+if len(st.session_state["expend_df"]) != 0:
+    st.caption("Data to be uploaded to the database")
+    st.session_state["expend_df"].loc[:, st.session_state["expend_df"].columns!="user_id"]
+    
+    manual_upload = st.button("Upload to database?", key="manual_expenditure")
+
+    if manual_upload:
+        st.session_state["expend_df"].to_sql(con=database.engine,name=models.Expenditures.__tablename__, if_exists="append", index=False)
+        
+        del st.session_state["expend_df"]
+        st.success("Data was uploaded!")
             
 
 

@@ -1,7 +1,7 @@
 import streamlit as st
 import database
 import utils
-import pandas as pd
+
 
 st.set_page_config("Settings", page_icon="⚙")
 

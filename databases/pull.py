@@ -23,7 +23,7 @@ def pull_data(start_month):
     #Populates a DataFrame with data from the provided SQL-query to the project's sqlite database.
     df = pd.read_sql(f"""SELECT * FROM Transactions
                         WHERE Transaktionsdatum 
-                        >= '{start_month}'
+                        >= '{start_month}':: date
                         """, con=conn)
     
     #Changes format of the Transaktionsdatum column to datetime

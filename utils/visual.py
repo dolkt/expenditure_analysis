@@ -19,7 +19,7 @@ def line_plot(df, selected_categories):
     """
 
     #Groups per category and performs monthly-resample on the data
-    df = df.groupby("Kategori").resample(on="Transaktionsdatum", rule="M").sum().reset_index()
+    df = df.groupby("Kategori").resample(on="Transaktionsdatum", rule="M").sum(numeric_only=True).reset_index()
 
     #Masks the data based on the categories and where belopp is less than 0 (it's costs only)
     df = df[(df["Kategori"].isin(selected_categories)) & (df["Belopp"] < 0)]
@@ -55,9 +55,6 @@ def monthly_balance(df):
     #Monthly-resample of the data and takes the latest entry of balance (saldo)
     df = df.resample(on="Transaktionsdatum", rule="M").agg({"Saldo": "last"}).reset_index()
 
-    #Data cleaning of the Saldo values.
-    df["Saldo"] = df["Saldo"].apply(lambda row: float(row.replace(" ", "").replace(",", ".")))
-
     #Date on x-axis and balance on y-axis.
     px_line = px.line(data_frame=df, x="Transaktionsdatum", y="Saldo", markers=True)
 
@@ -83,7 +80,7 @@ def bar_plot(df):
     """
 
     #Monthly-resample of the data
-    df = df.resample(rule="M", on="Transaktionsdatum").sum().reset_index()
+    df = df.resample(rule="M", on="Transaktionsdatum").sum(numeric_only=True).reset_index()
 
     #Sets a color indicator column for the bar plot
     df["color"] = np.where(df["Belopp"] > 0, "green", "red")
@@ -126,13 +123,13 @@ def horizontal_barplot(df, selected_month):
     df = df[(df["month"] == selected_month) & (df["Typ"] == "Kostnad")]
 
     #Groups the df based on category and sums the values and sorts them.
-    df = df.groupby("Kategori").sum().sort_values(by="Belopp", ascending=False)
+    df = df.groupby("Kategori").sum(numeric_only=True).sort_values(by="Belopp", ascending=False)
 
     #For prettifying the plot it puts the costs as positives instead
     df["Belopp"] = df["Belopp"] * -1
 
     #Horizontal bar chart of the data.
-    px_hbar = px.bar(data_frame=df, orientation="h", text_auto=".2s", title="Spending per Category (kr)")
+    px_hbar = px.bar(data_frame=df, y=df.index, x="Belopp", orientation="h", text_auto=".2s", title="Spending per Category (kr)")
 
     #Updates the layout of the plot
     px_hbar.update_layout(yaxis={"title_text": None},
