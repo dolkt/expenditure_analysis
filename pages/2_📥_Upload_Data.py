@@ -10,8 +10,11 @@ st.set_page_config(page_title="Upload Data", page_icon="💾")
 
 
 #Header for the page
-st.subheader("Upload Data by File")
+st.subheader("Upload with file")
+st.markdown("Upload your expenditures and income with an excel file.  \n"
+            "Categorization and income/expenditure labeling is done automatically")
 
+st.caption(":red[Note:] :pencil: File upload currently only works with files from Handelsbanken")
 #File upload functionality. Restricted to .xls.
 chosen_file = st.file_uploader(label="Choose a file", help="Select a transactionfile from Handelsbanken",
                                 type="xls")
@@ -50,7 +53,9 @@ if chosen_file:
 
 
 
-st.subheader("Upload Data Manually")
+st.subheader("Upload manually")
+st.markdown("Add and label your expenditures/income manually.  \n"
+            "Each addition will be added to a table below and when you are done press :blue[_'Upload to database?'_].")
 
 col1, col2 = st.columns(2)
 
@@ -103,7 +108,7 @@ if income_submit:
      st.session_state["expend_df"] = pd.concat([st.session_state["expend_df"], new_data], ignore_index=True)     
 
 if len(st.session_state["expend_df"]) != 0:
-    st.caption("Data to be uploaded to the database")
+    st.caption(":red[Note:] :pencil: Data below will be uploaded to the database when you press 'Upload to database'")
     st.session_state["expend_df"].loc[:, st.session_state["expend_df"].columns!="user_id"]
     
     manual_upload = st.button("Upload to database?", key="manual_expenditure")
@@ -115,5 +120,3 @@ if len(st.session_state["expend_df"]) != 0:
         st.success("Data was uploaded!")
             
 
-
-st.session_state
