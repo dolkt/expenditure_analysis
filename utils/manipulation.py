@@ -113,7 +113,7 @@ def update_category(category_name: str, category_text: str, user_id: int, db: Se
     category_text = category_text.rstrip().lstrip()
 
     if category_name == None:
-        return st.error("You need to add a category first, dummy")
+        return st.error("You need to add a category first.")
 
     existing_text = db.query(models.Expenditures).filter(models.Expenditures.user_id == user_id, models.Expenditures.Text == category_text).all()
 
