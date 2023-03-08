@@ -9,12 +9,16 @@ st.set_page_config(page_title="Expenditure Visualization", page_icon="📊")
 
 #First section of the application
 st.header("Expenditure Visualization")
-st.markdown("Select a starting month to start the analysis from.")
 
 #Checking the earliest and the latest date in the db in order to give the user a date range from the prompt
 START_DATE = database.check_earliest_date(user_id=st.session_state["user_id"])
 END_DATE = database.check_latest_date(user_id=st.session_state["user_id"])
 
+if START_DATE is None:
+    st.warning("You need to add some data first!")
+    st.stop()
+   
+st.markdown("Select a starting month to start the analysis from.")
 
 #Divide the provided dates into monthly sections
 datelist = pd.date_range(start=START_DATE, end=END_DATE, freq="M")
