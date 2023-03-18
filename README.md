@@ -8,10 +8,10 @@ The expenditures can either be added manually or be uploaded via transaction sta
 In the data visualization section oof the application, the user can visualize their spending based on a selected date range. The visualization allows the user to visualize their surplus deficits within each month, as well as seeing the spending for each category over months, or years.
 
 #### Example of surplus / deficit visualization
-![](img/visualization.webm) 
+[visualization.webm](https://user-images.githubusercontent.com/58913762/226142185-94f38c07-0a31-4196-874c-81b9a7513b74.webm)
 
 #### Example of visualization of category based spending
-![](img/quarterly.png)
+[upload_data.webm](https://user-images.githubusercontent.com/58913762/226142187-cfb75716-a53e-4501-b529-3f47277fdec1.webm)
 
 
 ## Features
