@@ -1,38 +1,41 @@
 ![](img/logo.png)
 ___
-## 1. Introduction
-Expenditure Analysis is a Python library for dealing with categorization of transaction data from Handelsbanken.
+## Introduction
+This is a web application that allows users to visualize their spending based on categories that they set up. The application enables users to add their expenditure into the specified categories, which helps to track their spending over time.
 
-The library has **two** functionalities
+The expenditures can either be added manually or be uploaded via transaction statement file (Currently only support Handelsbanken). With file upload the user's expenditures will be automatically categorized based on the information contained in the text. 
 
-1. Takes a transactionfile from Handelsbanken, cleans the data and places each transaction into a predefined category based on the textual data of the transaction. It then uploads the cleaned and categorized data to a local sqlite database.
-2. Produces a Expenditure Report for a given time interval.
+In the data visualization section oof the application, the user can visualize their spending based on a selected date range. The visualization allows the user to visualize their surplus deficits within each month, as well as seeing the spending for each category over months, or years.
 
-The Expenditure Report can either be visualized on a one-month basis or as a quarter-by-quarter report for a given time interval.
+#### Example of surplus / deficit visualization
+![](img/visualization.webm) 
 
-The purpose of Expenditure Analysis is to give the Handelsbanken user a better understanding of their expenditures. This understanding can be used to identify unwanted spending patterns, i.e if the user spends too much money on fast food.
-
-The categorized costs can be tracked over time with the monthly and quarterly report in order to see if the user is able to successfully change their previously (unwanted) spending patterns.
-
-#### Example of Monthly Expenditure Report:
-![](img/monthly.png) 
-
-#### Example of Quarterly Expenditure Report:
+#### Example of visualization of category based spending
 ![](img/quarterly.png)
 
-The "*Quarterly Expenditure Report*" will divide all your cost categories into three quartiles (*High*, *Medium* and *Low*). The *High* category contains the cost categories with the highest amount spent for the given time period.
 
-## 2. Main Packages Used
-* Pandas - For data cleaning and manipulation.
-* Numpy - For data cleaning and manipulation.
-* Regex - For handling textual patterns in the data.
-* sqlite3 - For storing the data in a local database.
-* Matplotlib - For data visualization.
-* PdfPages - Each Expenditure Report will be stored in a pdf.
+## Features
+* Users can create custom categories for their expenses
+* Users can add expenses to their chosen categories
+* The expenses can either be added manually or uploaded via file
+    * If it's uploaded via file then the expenses will be categorized automatically
+* The application automatically generates charts and graphs that show spending trends by category over time
+* Users can filter the charts and graphs by date range or specific categories
 
 
-## 3. Installation
-The program can be installed using Git
+## Technology Used
+* Python - Streamlit for the frontend
+* Python - sqlalchemy for the backend
+* Postgresql for the database
+* Python - Plotly and Pandas for generating graphs and charts
+* Docker - For containerization of the application
+
+## Installation
+*Note* : If you want to run it locally you will need to have:
+* Python installed on your system
+* Some DBMS installed on your system / or use cloud based DBMS
+
+Given that the requirements above are fulfilled, the web application can be retrieved using Git:
 
 
 ```bash
@@ -45,72 +48,12 @@ $ cd expenditure_analysis
 #Installing dependencies
 $ pip install -r requirements.txt
 ```
+In order to connect to your own database you can:
+* Set up .env file at the project's root containing db_url=<your_url> (*Recommended*) 
+* Replace the connecting string in database.py -> engine = create_engine(url=<your_url>)
 
-## 4. How To Use
-In order to do any data visualization with the Expenditure Report functionality there has to be any underlying data. Therefore, the user must import their transaction file as a first step.
+To start the web application:
 
-### 4.1 Downloading Transaction File
-While logged in the file is retrievable from Handelsbanken here:
-
-![](img/bank.png)
-
-Download the .csv and place it in the following project folder:
-
-``` 
-.\expenditure_analysis\files
-```
-
-### 4.2 Upload the transaction file
-Via command line:
 ```bash
-#Go to the expenditures directory
-cd expenditure_analysis
-
-#Execute the running script
-python run.py
-```
-
-* Choose "*Upload new data*" by pressing num key 1, as informed by the prompt.
-* All eligible transaction files will be listed. Choose which file to upload to the internal database by pressing the numeric key for the file you want to upload, as informed by the prompt.
-
-![](img/upload.gif)
-
-### 4.3 Producing Expenditure Report
-Via command line:
-```bash
-#Go to the Expenditures directory
-cd expenditure_analysis
-
-#Execute the running script
-python run.py
-```
-
-* Choose "*Produce Expenditure Report*" by pressing num key 2, as informed by the prompt.
-* Choose which report you want. "*One-Month Report*" or "*Quarterly Report*".
-* The report will be placed as a .pdf in the folder:
-```
-.\expenditure_analysis\Reports
-```
-![](img/visualization.gif)
-
-## 5.0 User Configuration
-The user can configure their own categories and the belonging transaction text.
-These categories can later on be seen in the produced "*Expenditure Report*"
-
-The dictionary used to define the categories has the **keys** as the cost categories and the responding **values** as the transaction text that will be matched to that category.
-
-Taken from the file:
-```python
-#Source
-.\expenditure_analysis\utils\manipulation.py
-
-#Below are sample categories for my file.
-categories = {"Rent":["ga fastighet", "stenbackahus", "överf internet"],
-                "Subscriptions":["hbo", "netflix", "rewell", "medium", "saga motion", "whoop", "disney"],
-                "Food":["coop", "ica", "willys"],
-                "Fast Food":["uber \*eats", "foodora", "subway", "mcdonalds"],
-                "Travel":["sl", "ab storstockho", "ul kollektivtr", "uber \*trip", "taxi"],
-                "Clothes":["massimo", "nk", "ahlens", "nk", "zalando"],
-                "Health":["apotek"],
-                "Installments": ["centrala"]}
+streamlit run Home.py
 ```
