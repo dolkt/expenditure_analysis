@@ -5,7 +5,7 @@ This is a web application that allows users to visualize their spending based on
 
 The expenditures can either be added manually or be uploaded via transaction statement file (Currently only support Handelsbanken). With file upload the user's expenditures will be automatically categorized based on the information contained in the text. 
 
-In the data visualization section oof the application, the user can visualize their spending based on a selected date range. The visualization allows the user to visualize their surplus deficits within each month, as well as seeing the spending for each category over months, or years.
+In the data visualization section of the application, the user can visualize their spending based on a selected date range. The visualization allows the user to visualize their surplus deficits within each month, as well as seeing the spending for each category over months, or years.
 
 #### Example of surplus / deficit visualization
 [visualization.webm](https://user-images.githubusercontent.com/58913762/226142185-94f38c07-0a31-4196-874c-81b9a7513b74.webm)
