@@ -10,7 +10,7 @@ In the data visualization section oof the application, the user can visualize th
 #### Example of surplus / deficit visualization
 [visualization.webm](https://user-images.githubusercontent.com/58913762/226142185-94f38c07-0a31-4196-874c-81b9a7513b74.webm)
 
-#### Example of visualization of category based spending
+#### Example of uploading expenditure data to the database
 [upload_data.webm](https://user-images.githubusercontent.com/58913762/226142187-cfb75716-a53e-4501-b529-3f47277fdec1.webm)
 
 
