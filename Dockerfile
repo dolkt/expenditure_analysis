@@ -8,4 +8,4 @@ RUN pip3 install --no-cache-dir --upgrade -r /app/requirements.txt
 
 COPY . /app
 
-CMD ["streamlit", "run", "Home.py", "--server.port", "10000", "--server.address", "0.0.0.0"]
+CMD ["streamlit", "run", "Home.py", "--server.port", "10000"]

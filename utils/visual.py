@@ -1,21 +1,26 @@
 """Module containing the visualization tools used on the provided DataFrame"""
 import plotly.express as px
+import pandas as pd
 import numpy as np
+from typing import List
 
 
-def line_plot(df, selected_categories):
+def line_plot(df: pd.DataFrame, selected_categories: List[str]) -> px.line:
     """
     Masks the provided pandas.DataFrame given the provided categories.
     Plots the costs of the selected categories over time
     
     --------
     Parameters
-    df - pandas.DataFrame of transaction data
-    selected_categories - list of str containing the user provided categories
+    df: pandas.DataFrame
+        Containing transaction data
+    selected_categories: list of str 
+        Containing categories that the user wants to visualize over time..
     
     ---------
     Returns
-    plotly.express.line figure
+    plotly.express.line
+        Line figure showing transactional data over time for given categories.
     """
 
     #Groups per category and performs monthly-resample on the data
@@ -39,20 +44,23 @@ def line_plot(df, selected_categories):
     return px_line
 
 
-def monthly_balance(df):
+def monthly_balance(df: pd.DataFrame) -> px.line:
     """
-    Line plot on the monthly-resample of the provided pandas.DataFrame and takes the latest record of user's balance for each month
+    Line plot on the monthly-resample of the provided pandas.DataFrame and takes the latest record of user's balance for each month.
+    Only being used for users that have uploaded data via File Upload.
     
     --------
     Parameters
-    df - pandas.DataFrame of transaction data
+    df: pandas.DataFrame
+        Containing transaction data
     
     --------
     Returns
-    plotly-express.line figure
+    plotly-express.line
+        Figure showing the user's balance over time
     """
     
-    #Monthly-resample of the data and takes the latest entry of balance (saldo)
+    #Monthly-resample of the data and takes the latest entry of balance (saldo) for each month in the dataframe.
     df = df.resample(on="Transaktionsdatum", rule="M").agg({"Saldo": "last"}).reset_index()
 
     #Date on x-axis and balance on y-axis.
@@ -66,23 +74,25 @@ def monthly_balance(df):
 
     return px_line
 
-def bar_plot(df):
+def bar_plot(df: pd.DataFrame) -> px.bar:
     """
-    Monthly resamples the data and provides a bar plot of the profit/loss per month
+    Monthly resamples the data and provides a bar plot of the profit/loss per month.
     
     --------
     Parameters
-    df - pandas.DataFrame of transaction data
+    df: pandas.DataFrame
+        Containing transaction data
     
     --------
     Returns
-    plotly.express.bar figure
+    plotly.express.bar
+        Figure showing whether the user's costs exceeded their income or not.
     """
 
-    #Monthly-resample of the data
+    #Monthly-resample of the data. Summarizes all the costs and income for each month.
     df = df.resample(rule="M", on="Transaktionsdatum").sum(numeric_only=True).reset_index()
 
-    #Sets a color indicator column for the bar plot
+    #Sets a color indicator column for the bar plot. If positive = green, else red.
     df["color"] = np.where(df["Belopp"] > 0, "green", "red")
     
     #Provides a bar plot of the profit/loss, where profit is green and loss is red.
@@ -105,19 +115,22 @@ def bar_plot(df):
     return px_bar
 
 
-def horizontal_barplot(df, selected_month):
+def horizontal_barplot(df: pd.DataFrame, selected_month: str) -> px.bar:
     """
     Masks the data on a specific month and provides an horizontal bar plot of the costs
     
-    
     --------
     Parameters
-    df - pandas.DataFrame of transaction data
-    selected_month - str containing the month name
+    df: pandas.DataFrame
+        Containing transaction data
+    selected_month: str
+        Containing the selected month as '%b-%Y', e.g. Mar-2023.
     
     --------
     Returns
-    plotly.express.bar figure"""
+    plotly.express.bar
+        Figure showing the costs for each category, where each category is represented as a bar.
+    """
 
     #Masks the df based on the provided month and only including costs.
     df = df[(df["month"] == selected_month) & (df["Typ"] == "Kostnad")]

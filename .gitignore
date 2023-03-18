@@ -4,3 +4,4 @@ test_dev.py
 *alembic
 *.ini
 __pycache__/
+__pycache__

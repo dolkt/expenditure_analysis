@@ -8,7 +8,7 @@ models.Base.metadata.create_all(bind=engine)
 #Checks if the user is logged in. If not it prompts log-in.
 if "current_user" not in st.session_state:
 
-#<<<----Login section>>-----
+#<<<----Login section>>>----
     st.subheader("Login")
 
     login_username = st.text_input(label="Username", key="login_username")
@@ -16,7 +16,7 @@ if "current_user" not in st.session_state:
 
     st.button(label="Login", key="log_in", on_click=utils.login, args=(login_username, login_password))
 
-#<<<----Register user>>-----
+#<<<----Register user section>>>----
     with st.expander(label="Register"):
         col1, col2  = st.columns(2)
 
@@ -31,7 +31,7 @@ if "current_user" not in st.session_state:
             provided_email = st.text_input("E-mail")
             user_registration = st.button("Register", on_click=utils.register_user, key="register", args=(provided_username, provided_password, provided_password2, provided_fname, provided_lname, provided_email))
             
-
+#<<<----Welcome user section>>>----
 else:
     st.subheader(f"Welcome {st.session_state['first_name']}! 🎉")
 

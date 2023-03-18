@@ -4,17 +4,26 @@ import numpy as np
 import regex as re
 import streamlit as st
 import models
-from typing import Union
+import datetime
+from typing import Union, Dict, List
 from database import get_db, SessionLocal, get_user_categories
 
 
-def categorization(frame, user_id: int) -> pd.DataFrame:
-    """Cleans the data and places transactions in provided categories
+def categorization(frame: pd.DataFrame, user_id: int) -> pd.DataFrame:
+    """
+    Cleans the data and places transactions in provided categories
 
-    Keyword arguments:
-    frame -- The provided DataFrame to clean and perform categorization on
+    --------
+    Parameters
+    frame: pd.DataFrame
+        The provided DataFrame to clean and perform categorization on.
+    user_id: int
+        The user_id to retrieve the categories for.
 
-    Returns DataFrame
+    --------    
+    Returns
+    frame: pd.DataFrame
+        Containing the transactions with it's assigned categories.
     """
 
     #Cleans the DataFrame and puts the first entry as the column names.
@@ -56,12 +65,33 @@ def categorization(frame, user_id: int) -> pd.DataFrame:
     return frame
 
 
-def add_expenditure(date, category: str, amount: float, user_id: int, text: Union[str, None] = None):
+def add_expenditure(date: datetime.datetime, category: str, amount: float, user_id: int, text: Union[str, None] = None) -> pd.DataFrame:
+    """
+    Creates a dataframe of the user provided data and places it in the correct columns so that it can be uploaded to the database.
 
+    --------
+    Parameters
+    date: datetime.datetime
+        Containing the date when the transaction happened (according to the user)
+    category: str
+        Which category the transaction should belong to (according to the user)
+    amount: float
+        The amount of the transaction (according to the user)
+    user_id: int
+        The id of the current user
+    text: Union[str, None]
+        Optional entry of the user.
+
+    --------    
+    Returns
+    new_table: pd.DataFrame
+        Dataframe containing the fields provided by the user.
+    """
+    
     data = {
         "Transaktionsdatum": date,
         "Text": text,
-        "Belopp": amount * -1 if amount > 0 else amount,
+        "Belopp": amount * -1 if amount > 0 else amount, #Automatically converts to negative amount.
         "Typ": "Kostnad",
         "Kategori": category,
         "user_id": user_id
@@ -71,31 +101,63 @@ def add_expenditure(date, category: str, amount: float, user_id: int, text: Unio
 
     return new_table
 
-def add_income(date, amount: float, user_id: int) -> pd.DataFrame:
+def add_income(date: datetime.date, amount: float, user_id: int) -> pd.DataFrame:
+    """
+    Creates a dataframe of the user provided data and places it in the correct columns so that it can be uploaded to the database.
+
+    --------
+    Parameters
+    date: datetime.datetime
+        Containing the date when the transaction happened (according to the user)
+    amount: float
+        The amount of the transaction (according to the user)
+    user_id: int
+        The id of the current user
+    
+    --------
+    Returns
+    new_table: pd.DataFrame
+        Dataframe containing the fields provided by the user.
+    """
 
     data = {
         "Transaktionsdatum": date,
-        "Belopp": amount * -1 if amount < 0 else amount,
+        "Belopp": amount * -1 if amount < 0 else amount, #Automatically converts to a positive amount.
         "Typ": "Inkomst",
         "user_id": user_id
     }
 
     return pd.DataFrame([data])
 
-def add_category(category_name: str, category_text: str, user_id: int, db: SessionLocal = next(get_db()), customized: bool = False):
+def add_category(category_name: str, category_text: str, user_id: int, db: SessionLocal = next(get_db())) -> None:
+    """
+    Function to add category for the given user
+    
+    --------
+    Parameters
+    category_name: str
+        Name of the category (provided by the user)
+    category_text: str
+        Is an optional parameter in the application (provided by the user)
+    user_id: int
+        The id of the current user
+    db: sqlalchemy.orm.sessionmaker
+        Connects to the database and sets up a session.
+    """
 
+    #Removes whitespace leading and trailing whitespace
     category_name = category_name.rstrip().lstrip()
     category_text = category_text.rstrip().lstrip()
 
+    #Checks whether a category with the name already exists
     existing_category = db.query(models.Categories).filter(models.Categories.user_id == user_id, models.Categories.name == category_name).first()
 
     if category_name.strip() is None:
         return st.warning("Please provide a name")
 
-    if existing_category and not customized:
+    if existing_category:
         return st.error("Category with that name already exist!")
 
-    
     category_model = models.Categories()
 
     category_model.name = category_name
@@ -108,15 +170,33 @@ def add_category(category_name: str, category_text: str, user_id: int, db: Sessi
 
     return st.success("Category was added!")
 
-def update_category(category_name: str, category_text: str, user_id: int, db: SessionLocal = next(get_db())):
+def update_category(category_name: str, category_text: str, user_id: int, db: SessionLocal = next(get_db())) -> None:
+    """
+    Updates a current category with texts (in the transaction file) that can identify it.
+    This is only used for users who utilize the File Upload functionality.
+    
+    --------
+    Parameters
+    category_name: str
+        Name of the category (provided by the user)
+    category_text: str
+        The text that can identify the given category (provided by the user)
+    user_id: int
+        The id of the current user.
+    db: sqlalchemy.orm.sessionmaker
+        Connects to the database and sets up a session.
+    """
 
+    #Removes leading and trailing whitespace.
     category_text = category_text.rstrip().lstrip()
 
     if category_name == None:
         return st.error("You need to add a category first.")
 
+    #Checks if the current text already exists within the database for the given user.
     existing_text = db.query(models.Expenditures).filter(models.Expenditures.user_id == user_id, models.Expenditures.Text == category_text).all()
 
+    #If the texts already exists it will update and place all the transactions (with this text) to the given category.
     if existing_text:
         db.query(models.Expenditures).filter(
             models.Expenditures.user_id == user_id, models.Expenditures.Text == category_text).update(
@@ -147,10 +227,12 @@ def delete_category(category_name: str, user_id: int, db: SessionLocal = next(ge
     
     --------
     Parameters
-    
-    category_name: str of the category that is being deleted
-    user_id: int of the user id where the category will be deleted
-    db: SessionLocal a connection to the database
+    category_name: str
+        The category that is being deleted.
+    user_id:
+        The id of the current user.
+     db: sqlalchemy.orm.sessionmaker
+        Connects to the database and sets up a session.
     """
     
     #Recategorizes the expenditures currently within 'category_name' to 'Other' for the given user
@@ -172,21 +254,22 @@ def delete_category(category_name: str, user_id: int, db: SessionLocal = next(ge
 
 
 
-def categories_dict(user_id: int) -> dict:
+def categories_dict(user_id: int) -> Dict[str, List[str]]:
     """
     Helper function used for the categorization of expenditures provided by a file.
     Adds all the categories and it's corresponding texts that identify it to a dictionary.
     The key in the dictionary will be the category and the values will be the texts
     that identify the given category within the key
     
-    
     --------
     Parameters
-    user_id: int id of the given user
+    user_id:
+        The id of the current user.
 
     --------
     Returns
-    dict containing key-value pair of the user's category and each category's identifying texts.
+    categories_dict: dict
+        Key-value pair of the user's category (key) and each category's identifying texts (values).
     """
 
     #Calls the database and gets all the categories for the given user

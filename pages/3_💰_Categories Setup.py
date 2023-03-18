@@ -3,9 +3,9 @@ import database
 import utils
 
 #Sets the page configuration so that the browser shows the page name and icon.
-st.set_page_config("Settings", page_icon="💰")
+st.set_page_config("💰 Categories Setup", page_icon="💰")
 
-#<!-- Initial informational section -->
+#<<<----Initial informational section>>>----
 if "current_user" in st.session_state:
     st.subheader("User Categories")
     st.markdown("In this section you will be able to configure the categories that will be used for your expenditure categorization. The page consists of three sub-pages:  \n"
@@ -16,6 +16,7 @@ if "current_user" in st.session_state:
     #Retrieves the user's categories from the database.
     user_categories = database.get_user_categories(user_id=st.session_state["user_id"], usage="display")
 
+    #<<<----Expander to show the user's categories>>>----
     with st.expander("Show my categories"):
         if len(user_categories) != 0:
             st.caption(":red[Note:] :pencil: A category will appear multiple times if you are using different texts to identify it.  \n"
@@ -25,7 +26,7 @@ if "current_user" in st.session_state:
             st.warning("You do not have any categories yet!")
 
 
-    #<!-- Add, Edit and Delete Section -->
+    #<<<----Add, edit or delete a category section>>>----
     st.subheader("Add, Identify or Delete a Category")
 
     add_tab, edit_tab, delete_tab = st.tabs(["Add Category", "Identify Category by Text", "Delete Category"])

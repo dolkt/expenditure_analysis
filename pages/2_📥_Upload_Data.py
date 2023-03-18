@@ -9,17 +9,18 @@ if "current_user" in st.session_state:
     st.set_page_config(page_title="Upload Data", page_icon="💾")
 
 
-    #Header for the page
+    #<<<----File Upload Section>>>----
     st.subheader("Upload with file")
     st.markdown("Upload your expenditures and income with an excel file.  \n"
                 "Categorization and income/expenditure labeling is done automatically")
 
     st.caption(":red[Note:] :pencil: File upload currently only works with files from Handelsbanken")
+    
     #File upload functionality. Restricted to .xls.
     chosen_file = st.file_uploader(label="Choose a file", help="Select a transactionfile from Handelsbanken",
                                     type="xls")
 
-    #Stops the page if no file is uploaded
+    #If file is uploaded it will read it, categorize it given the current user's categories
     if chosen_file:
         #Reads the user provided xls.
         df = pd.read_html(chosen_file)[3] 
@@ -30,6 +31,7 @@ if "current_user" in st.session_state:
         #Shows sample data from the provided xls.
         st.write("Sample from the data to upload:", df.head())
 
+        #Sets a column for the current user's id. Will be used later for the database upload.
         df["user_id"] = st.session_state["user_id"]
 
         #Prompts the user whether they want to upload the data to the database
@@ -44,11 +46,10 @@ if "current_user" in st.session_state:
             df = df[df["Transaktionsdatum"] > date_checker]
 
             if len(df) > 1:
-                #database.upload_data(df)
                 df.to_sql(con=database.engine, name=models.Expenditures.__tablename__, if_exists="append", index=False)
                 st.success("Data was uploaded", icon="✔")
             else:
-                st.error("All that data is already in the database")
+                st.error("All that data is already in the database") #If the mask gives an empty dataframe it does not upload anything.
             
 
 

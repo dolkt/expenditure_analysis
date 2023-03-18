@@ -9,9 +9,11 @@ if "current_user" in st.session_state:
     #Setting the title for the page as well as the icon displayed in the browser tab
     st.set_page_config(page_title="Expenditure Visualization", page_icon="📊")
 
-    #First section of the application
+    #Header for the page.
     st.header("Expenditure Visualization")
 
+    #<<<----Initial Section of the page where the user can set their date range>>>----
+    
     #Checking the earliest and the latest date in the db in order to give the user a date range from the prompt
     START_DATE = database.check_earliest_date(user_id=st.session_state["user_id"])
     END_DATE = database.check_latest_date(user_id=st.session_state["user_id"])
@@ -38,7 +40,7 @@ if "current_user" in st.session_state:
     #Pulls data from the database given the date input from the user
     df = database.get_cash_data(user_id=st.session_state["user_id"], start_month=datetime.strptime(starting_month, "%b-%Y"))
 
-    #Second section regarding the overview level of the analysis
+    ##<<<----Overview Section of the Page>>>----
     st.subheader("Overview Level")
     st.markdown("The overview level will visualize what the spending were on an aggregate level, month-by-month.  \n"
                 "The page consists of three sub-pages  \n"
@@ -69,7 +71,7 @@ if "current_user" in st.session_state:
 
         st.plotly_chart(utils.horizontal_barplot(df, selected_month=selected_month))
 
-    #Third section regarding the category level
+    #<<<----Detailed Category Level section>>>----
     st.subheader("Category Level")
     st.markdown("The category level visualizes what the spending was on a more granular level.  \n"
                 "The page consists of two sub-pages:  \n"
