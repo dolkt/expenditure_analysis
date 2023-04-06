@@ -165,8 +165,7 @@ def login(username: str, password: str, db: SessionLocal = next(get_db())) -> st
     user = authenticate_user(username, password, db)
 
     if not user:
-        st.error("Invalid credentials!")
-        return st.stop()
+        return st.error("Invalid credentials!")
 
     st.session_state["current_user"] = user.username
     st.session_state["first_name"] = user.first_name
